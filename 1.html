@@ -1,159 +1,202 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-  <meta charset="UTF-8">
-  <title>写给你的情书</title>
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      height: 100%;
-      background: linear-gradient(to right, #fbc2eb, #a6c1ee);
-      font-family: "Courier New", Courier, monospace;
-    }
-
-    #heart {
-      position: fixed;
-      z-index: 1;
-    }
-
-    .typing {
-      position: absolute;
-      top: 20%;
-      width: 80%;
-      left: 10%;
-      color: white;
-      font-size: 24px;
-      line-height: 1.8;
-      z-index: 10;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
-    }
-
-    .heart {
-      width: 10px;
-      height: 10px;
-      position: fixed;
-      background: red;
-      transform: rotate(45deg);
-      animation: fade 1.2s linear;
-    }
-
-    .heart:before,
-    .heart:after {
-      content: "";
-      width: 10px;
-      height: 10px;
-      background: red;
-      border-radius: 50%;
-      position: absolute;
-    }
-
-    .heart:before {
-      top: -5px;
-      left: 0;
-    }
-
-    .heart:after {
-      left: -5px;
-      top: 0;
-    }
-
-    @keyframes fade {
-      0% { opacity: 1; transform: scale(1) rotate(45deg); }
-      100% { opacity: 0; transform: scale(3) rotate(45deg); top: -100px; }
-    }
-  </style>
-</head>
-<body>
-
-<canvas id="heart"></canvas>
-
-<div class="typing" id="text"></div>
-
-<audio autoplay loop>
-  <source src="https://cdn.pixabay.com/audio/2023/03/22/audio_3c5f186bf3.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-  // 打字效果
-  const content = `亲爱的你：
-
-从遇见你的那一刻起，我的世界开始有了光。
-你笑的样子，是我永远的温柔牵挂。
-愿未来的日子，风景有你，万事胜意。
-
-爱你的人 ❤️`;
-  const textBox = document.getElementById("text");
-  let i = 0;
-  function typeWriter() {
-    if (i < content.length) {
-      let char = content.charAt(i);
-      textBox.innerHTML += char === "\n" ? "<br/>" : char;
-      i++;
-      setTimeout(typeWriter, 70);
-    }
-  }
-  typeWriter();
-
-  // 飘爱心效果
-  document.addEventListener("click", function(e) {
-    const heart = document.createElement("div");
-    heart.className = "heart";
-    heart.style.left = e.clientX + "px";
-    heart.style.top = e.clientY + "px";
-    document.body.appendChild(heart);
-    setTimeout(() => document.body.removeChild(heart), 1200);
-  });
-
-  // 花瓣雨效果
-  const canvas = document.getElementById('heart');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const petals = [];
-
-  function Petal() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * -canvas.height;
-    this.radius = Math.random() * 10 + 5;
-    this.speedY = Math.random() * 2 + 1;
-    this.speedX = Math.random() * 1 - 0.5;
-    this.alpha = Math.random() * 0.5 + 0.5;
-
-    this.draw = function () {
-      ctx.beginPath();
-      ctx.fillStyle = `rgba(255,182,193,${this.alpha})`; // 粉色花瓣
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fill();
-    };
-
-    this.update = function () {
-      this.y += this.speedY;
-      this.x += this.speedX;
-      if (this.y > canvas.height) {
-        this.y = -10;
-        this.x = Math.random() * canvas.width;
+  <head>
+    <meta charset="UTF-8" />
+    <title>写给你的情书</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+        background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+        font-family: "Courier New", Courier, monospace;
       }
-      this.draw();
-    };
-  }
 
-  function initPetals() {
-    for (let i = 0; i < 100; i++) {
-      petals.push(new Petal());
-    }
-  }
+      #heart {
+        position: fixed;
+        z-index: 1;
+      }
 
-  function animatePetals() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    petals.forEach(petal => petal.update());
-    requestAnimationFrame(animatePetals);
-  }
+      .typing-box {
+        position: absolute;
+        top: 25%;
+        width: 80%;
+        left: 10%;
+        color: white;
+        font-size: 22px;
+        line-height: 1.8;
+        z-index: 10;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        min-height: 200px;
+      }
 
-  initPetals();
-  animatePetals();
-</script>
+      .btn-next {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px 20px;
+        background: #fff;
+        border: none;
+        border-radius: 20px;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 10;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
 
-</body>
+      .heart {
+        width: 10px;
+        height: 10px;
+        position: fixed;
+        background: red;
+        transform: rotate(45deg);
+        animation: fade 1.2s linear;
+      }
+
+      .heart:before,
+      .heart:after {
+        content: "";
+        width: 10px;
+        height: 10px;
+        background: red;
+        border-radius: 50%;
+        position: absolute;
+      }
+
+      .heart:before {
+        top: -5px;
+        left: 0;
+      }
+
+      .heart:after {
+        left: -5px;
+        top: 0;
+      }
+
+      @keyframes fade {
+        0% {
+          opacity: 1;
+          transform: scale(1) rotate(45deg);
+        }
+        100% {
+          opacity: 0;
+          transform: scale(3) rotate(45deg);
+          top: -100px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="heart"></canvas>
+
+    <div class="typing-box" id="text"></div>
+    <button class="btn-next" onclick="nextPage()">点击继续 💌</button>
+
+    <audio autoplay loop>
+      <source
+        src="https://cdn.pixabay.com/audio/2023/03/22/audio_3c5f186bf3.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <script>
+      // 💌 多段表白文字内容（升级版）
+      const pages = [
+        "亲爱的你：\n\n遇见你，是我生命中最美丽的意外。原本平淡如水的日子，因为你的出现，突然有了颜色和温度。我开始期待每一天清晨醒来，只为在消息列表里看到你的名字闪过；我开始喜欢黄昏的风，因为它好像带着你的气息。",
+
+        "你知道吗？你的一个笑容，足以让我心动很久；你说的一句“在呢”，足以让我快乐一整天。我不是一个擅长表达感情的人，但在你面前，我只想毫无保留地，把我所有的温柔与真诚都交给你。",
+
+        "从认识你的那一刻起，我就知道，我的世界再也容不下别人。你说话的语气，你走路的样子，甚至你不开心时的小表情，都让我觉得无比珍贵。我愿意静静看着你，就像看一场永不落幕的日出。",
+
+        "如果有一天你累了、倦了、烦了，我希望我可以是你第一个想到的人。不管前路有多远，我都愿意陪你一起走。风雨也好，晴天也罢，我只想牵着你的手，不松开。",
+
+        "这世界上有很多人，但你是唯一让我心甘情愿付出、毫无条件相信、愿意用一生去守护的人。我想和你一起看春花秋月，一起走过夏雨冬雪，只要是你，哪怕重复的日子，我也觉得特别。",
+
+        "最后，我只想对你说：\n\n谢谢你出现在我的生命中，让我感受到心动与热爱。我不知道未来会怎样，但我知道，只要是与你有关的一切，我都愿意认真去对待。\n\n—— 永远喜欢你的人 💖",
+      ];
+      let pageIndex = 0;
+      const textBox = document.getElementById("text");
+
+      // 🌟 打字效果
+      function typeWriter(content, i = 0) {
+        if (i < content.length) {
+          const char = content.charAt(i);
+          textBox.innerHTML += char === "\n" ? "<br/>" : char;
+          setTimeout(() => typeWriter(content, i + 1), 50);
+        }
+      }
+
+      function nextPage() {
+        if (pageIndex < pages.length) {
+          textBox.innerHTML = "";
+          typeWriter(pages[pageIndex]);
+          pageIndex++;
+        } else {
+          document.querySelector(".btn-next").innerText = "💖 已是最后一页";
+          document.querySelector(".btn-next").disabled = true;
+        }
+      }
+
+      nextPage(); // 显示第一页
+
+      // 💘 点击飘爱心
+      document.addEventListener("click", function (e) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.style.left = e.clientX + "px";
+        heart.style.top = e.clientY + "px";
+        document.body.appendChild(heart);
+        setTimeout(() => document.body.removeChild(heart), 1200);
+      });
+
+      // 🌸 花瓣雨背景动画
+      const canvas = document.getElementById("heart");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const petals = [];
+
+      function Petal() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * -canvas.height;
+        this.radius = Math.random() * 10 + 5;
+        this.speedY = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.alpha = Math.random() * 0.5 + 0.5;
+        this.draw = function () {
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(255,182,193,${this.alpha})`;
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fill();
+        };
+        this.update = function () {
+          this.y += this.speedY;
+          this.x += this.speedX;
+          if (this.y > canvas.height) {
+            this.y = -10;
+            this.x = Math.random() * canvas.width;
+          }
+          this.draw();
+        };
+      }
+
+      function initPetals() {
+        for (let i = 0; i < 100; i++) {
+          petals.push(new Petal());
+        }
+      }
+
+      function animatePetals() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        petals.forEach((petal) => petal.update());
+        requestAnimationFrame(animatePetals);
+      }
+
+      initPetals();
+      animatePetals();
+    </script>
+  </body>
 </html>
